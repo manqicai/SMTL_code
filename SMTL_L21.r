@@ -1,16 +1,26 @@
 #rmtl_X: list of feature matrices, each matrix is nk*p
-#rmtlYX: list of gene expression, each matrix is nk*1
+#rmtl_Y: list of gene expression, each matrix is nk*1
 #type: Sparse (MTL with L1) Sparse_L21 (MTL with L1 and L21)
 SMTL <- function(rmtl_X,rmtl_Y,type = "SParse_L21"){
   if(type == "SParse_L21"){
     K = length(rmtl_X)
     cvfit<-cvSMTL_L21(rmtl_X, rmtl_Y)
     m=admm.iters(Y = rmtl_Y,X = rmtl_X,lambda1 = cvfit$Lam1.min,lambda2   = cvfit$Lam2.min)$theta
-    m = matrix(unlist(m),ncol = K)
+    m = matrix(unlist(m),ncol = K,byrow = T)
+    
   }else if(type == "Sparse"){
     cvfit<-cvMTL(X = rmtl_X,Y=rmtl_Y,type = "Regression",Regularization = "Lasso")
-    m=MTL(X = rmtl_X,Y=rmtl_Y,Lam1 = cvfit$Lam1.min,Lam1_seq = cvfit$Lam1_seq)$W
+    m=t(MTL(X = rmtl_X,Y=rmtl_Y,Lam1 = cvfit$Lam1.min,Lam1_seq = cvfit$Lam1_seq)$W)
+  }else if(type == "LASSO"){
+    K = length(rmtl_X)
+    m = t(sapply(1:K,function(i){
+      fm <- cv.glmnet(rmtl_X[[i]],y =as.numeric(rmtl_Y[[i]]),intercept = F)
+      fm <- glmnet(x=rmtl_X[[i]],y =as.numeric(rmtl_Y[[i]]),lambda = fm$lambda.1se,intercept = F)
+      return(coef(fm)[-1,1])
+    }))
   }
+  colnames(m) = colnames(rmtl_X[[1]])
+  #rownames(m) = rownames(rmtl_Y[[1]])
   return(m)
 }
 

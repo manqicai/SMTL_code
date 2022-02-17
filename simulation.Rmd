@@ -1,0 +1,712 @@
+--
+title: "SMTL_sim"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## STEP 1: load the simulation parameters used as template 
+
+# Load Chu data parameter preset
+data(Chu_param_preset)
+
+#sim_result <- SPARSim_simulation(dataset_parameter = Brain_10X_param_preset)
+# Get parameter preset of definitive endoderm (96h) cells, i.e. cell type "A"
+cell_type_A <- SPARSim_create_simulation_parameter(
+                                  intensity = runif(n = 500, min = 0, max = 5000), 
+                                  variability = runif(n = 500, min = 0.001, max = 1), 
+                                  library_size = round(rnorm(n = 100, mean = 2*10^6, sd = 10^3)), 
+                                  condition_name = "cond_A")
+
+
+## STEP 2: define the fold change values for the marker genes 
+## (i.e. genes that are DE across different cell types)
+
+# cell type B: assume that the first 250 genes are the marker genes between cell type "A" and cell type "B", 
+# while the remaining 17282 genes share a common expression level
+#DE_multiplier_B <- c( rep(0,250), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(rep(0,250), rep(1, 250))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( rep(0,250), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 250), rep(0,250))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 100,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation first 250 bcell types genes are all 0, last 250 c cell types genes are all 0s
+Simdata1 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+cell_type_A <- SPARSim_create_simulation_parameter(
+                                  intensity = runif(n = 500, min = 0, max = 5000), 
+                                  variability = runif(n = 500, min = 0.001, max = 1), 
+                                  library_size = round(rnorm(n = 100, mean = 2*10^6, sd = 10^3)), 
+                                  condition_name = "cond_A")
+
+
+## STEP 2: define the fold change values for the marker genes 
+## (i.e. genes that are DE across different cell types)
+
+# cell type B: assume that the first 250 genes are the marker genes between cell type "A" and cell type "B", 
+# while the remaining 17282 genes share a common expression level
+#DE_multiplier_B <- c( rep(0,250), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(rep(0,250), rep(1, 250))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( rep(0,250), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 250), rep(0,250))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 100,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+Simdata2 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+fold_change_multiplier_B <-  rep(1, 500)
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( rep(0,250), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- rep(1, 500)
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 100,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+Simdata3 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+dd <- data.frame(celltype = c(rep("cellA",100),rep("cellB",100),rep("cellC",100))) # balanced 2-way
+
+x = model.matrix(~ -1+celltype, dd)
+
+sim_x = list(simdata1 = x, simdata2 = x,Simdata3 = x)
+simdata = list(simdata1 = Simdata1$count_matrix,simdata1 =Simdata2$count_matrix,simdata1 =Simdata3$count_matrix)
+
+system.time(sim_res <- marker_smtl(ncore = 63,len =500,data = simdata,X = sim_x))
+
+simdata_sc = lapply(simdata, function(x) return(log1p(x)))
+system.time(sim_res_scal <- marker_smtl(ncore = 63,len =500,data = simdata_sc,X = sim_x))
+
+system.time(sim_res_scal_spa <- marker_smtl(ncore = 63,len =500,data = simdata_sc,X = sim_x,type = "Sparse"))
+```
+
+```{r}
+## STEP 1: load the simulation parameters used as template 
+
+# Load Chu data parameter preset
+data(Chu_param_preset)
+
+# Get parameter preset of definitive endoderm (96h) cells, i.e. cell type "A"
+cell_type_A <- Chu_param_preset$Chu_C6
+
+
+## STEP 2: define the fold change values for the marker genes 
+## (i.e. genes that are DE across different cell types)
+
+# cell type B: assume that the first 500 genes are the marker genes between cell type "A" and cell type "B", 
+# while the remaining 17282 genes share a common expression level
+DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(DE_multiplier_B, rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), DE_multiplier_C,rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(DE_multiplier_B, rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), DE_multiplier_C,rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result2 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+fold_change_multiplier_B <- rep(1, 17782 )
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+
+fold_change_multiplier_C <- rep(1, 17782 )
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result3 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+dd2 <- data.frame(celltype = c(rep("cellA",188),rep("cellB",100),rep("cellC",150))) # balanced 2-way
+
+x_fc = model.matrix(~ -1+celltype, dd2)
+
+sim_x_fc = list(simdata1 = x_fc, simdata2 = x_fc,Simdata3 = x_fc)
+simdata_fc = list(simdata1 = SPARSim_result$count_matrix,simdata1 =SPARSim_result2$count_matrix,simdata1 =SPARSim_result3$count_matrix)
+
+simdata_sc_fc = lapply(simdata_fc, function(x) return(log1p(x)))
+
+simdata_sc_fc_sub = lapply(simdata_sc_fc, function(x){
+  x = x[c(1:1500),]
+})
+system.time(sim_res_scal_fc <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+system.time(sim_res_scal_fc_Lasso <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
+system.time(sim_res_scal_fc_sparse <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+
+heat_pl = function(x){
+  # K = nrow(x[[1]])
+  # P = ncol(x[[1]])
+ x =  x[which(sapply(x ,length) != 2)]
+  K = nrow(x[[1]])
+  P = ncol(x[[1]])
+  pl_list  = list()
+  for (i in 1:P) {
+    dat = t(sapply(x, function(j){
+  j[i,]
+}))
+    
+    pl_list[[i]] <- pheatmap(dat,cluster_rows = F,cluster_cols = F,border_color = NA,show_rownames = F,fontsize = 18, angle_col = 0,main =paste0("simdata",i),color = rev(hcl.colors(50, "BluYl")))
+  }
+ return(pl_list)
+  
+}
+psim_res_scal_fc = heat_pl(sim_res_scal_fc)
+psim_res_scal_fc_spa = heat_pl(sim_res_scal_fc_sparse)
+psim_res_scal_fc_la = heat_pl(sim_res_scal_fc_Lasso)
+```
+
+
+```{r}
+data(Chu_param_preset)
+
+# Get parameter preset of definitive endoderm (96h) cells, i.e. cell type "A"
+cell_type_A <- Chu_param_preset$Chu_C6
+
+
+## STEP 2: define the fold change values for the marker genes 
+## (i.e. genes that are DE across different cell types)
+
+# cell type B: assume that the first 500 genes are the marker genes between cell type "A" and cell type "B", 
+# while the remaining 17282 genes share a common expression level
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(0.0001,0.25,length = 500), rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(0.0001,0.25,length = 500),rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(0.0001,0.25,length = 500), rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(0.0001,0.25,length = 500),rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result2 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+fold_change_multiplier_B <- rep(1, 17782 )
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+
+fold_change_multiplier_C <- rep(1, 17782 )
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result3 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+dd2 <- data.frame(celltype = c(rep("cellA",188),rep("cellB",100),rep("cellC",150))) # balanced 2-way
+
+x_fc = model.matrix(~ -1+celltype, dd2)
+
+sim_x_fc = list(simdata1 = x_fc, simdata2 = x_fc,Simdata3 = x_fc)
+simdata_fc = list(simdata1 = SPARSim_result$count_matrix,simdata1 =SPARSim_result2$count_matrix,simdata1 =SPARSim_result3$count_matrix)
+
+simdata_sc_fc = lapply(simdata_fc, function(x) return(log1p(x)))
+
+simdata_sc_fc_sub = lapply(simdata_sc_fc, function(x){
+  x = x[c(1:1500),]
+})
+system.time(sim_res_scal_fc_seq <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+system.time(sim_res_scal_fc_seq_spa <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+system.time(sim_res_scal_fc_seq_l <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
+
+
+psim_res_scal_fc_seq = heat_pl(sim_res_scal_fc_seq)
+psim_res_scal_fc_seq_spa = heat_pl(sim_res_scal_fc_seq_spa)
+psim_res_scal_fc_seq_l = heat_pl(sim_res_scal_fc_seq_l)
+```
+
+```{r}
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(4,100,length = 500), rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(4,100,length = 500),rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(0.0001,0.25,length = 500), rep(1, 17282))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(0.0001,0.25,length = 500),rep(1,16782))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result2 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+fold_change_multiplier_B <- rep(1, 17782 )
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+
+fold_change_multiplier_C <- rep(1, 17782 )
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result3 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+dd2 <- data.frame(celltype = c(rep("cellA",188),rep("cellB",100),rep("cellC",150))) # balanced 2-way
+
+x_fc = model.matrix(~ -1+celltype, dd2)
+
+sim_x_fc = list(simdata1 = x_fc, simdata2 = x_fc,Simdata3 = x_fc)
+simdata_fc = list(simdata1 = SPARSim_result$count_matrix,simdata1 =SPARSim_result2$count_matrix,simdata1 =SPARSim_result3$count_matrix)
+
+simdata_sc_fc = lapply(simdata_fc, function(x) return(log1p(x)))
+
+simdata_sc_fc_sub = lapply(simdata_sc_fc, function(x){
+  x = x[c(1:1500),]
+})
+system.time(sim_res_scal_fc_seq_rev <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+system.time(sim_res_scal_fc_seq_spa_rev <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+system.time(sim_res_scal_fc_seq_l_rev <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
+
+psim_res_scal_fc_seq_rev = heat_pl(sim_res_scal_fc_seq_rev)
+psim_res_scal_fc_seq_spa_rev = heat_pl(sim_res_scal_fc_seq_spa_rev)
+psim_res_scal_fc_seq_l_rev = heat_pl(sim_res_scal_fc_seq_l_rev)
+```
+
+
+
+```{r}
+data(PBMC_10X_param_preset)
+
+# Get parameter preset of definitive endoderm (96h) cells, i.e. cell type "A"
+cell_type_A <- PBMC_10X_param_preset[[1]]
+
+cell_type_A <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = rep(1,17220 ), 
+                                  N_cells = 100,
+                                  condition_name = "cell_A")
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(4,100,length = 500), rep(1, 16720))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(4,100,length = 500),rep(1,16220))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+#DE_multiplier_B <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_B <- c(seq(0.0001,0.25,length = 500), rep(1, 16720))
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+#DE_multiplier_C <- c( runif(n = 250, min = 0.0001, max = 0.25), runif(n = 250, min = 4, max = 100) )
+fold_change_multiplier_C <- c(rep(1, 500), seq(0.0001,0.25,length = 500),rep(1,16220))
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result2 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+fold_change_multiplier_B <- rep(1, 17220 )
+
+# cell type C: assume that the last 500 genes are the marker genes between cell type "A" and cell type "C", 
+# while the first 17282 genes share a common expression level
+
+fold_change_multiplier_C <- rep(1, 17220 )
+
+
+## STEP 3: create simulation parameter for cell type "B" and "C"
+
+cell_type_B <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_B, 
+                                  N_cells = 100,
+                                  condition_name = "cell_B")
+
+cell_type_C <- SPARSim_create_DE_genes_parameter(
+                                  sim_param = cell_type_A, 
+                                  fc_multiplier = fold_change_multiplier_C, 
+                                  N_cells = 150,
+                                  condition_name = "cell_C")
+
+
+## STEP 4: perform SPARSim simulation
+
+# Create the global parameter set
+SPARSim_3_cell_types_params <- list(cell_type_1 = cell_type_A,
+                                    cell_type_2 = cell_type_B, 
+                                    cell_type_3 = cell_type_C)
+
+# Run SPARSim simulation
+SPARSim_result3 <- SPARSim_simulation(SPARSim_3_cell_types_params)
+
+dd2 <- data.frame(celltype = c(rep("cellA",100),rep("cellB",100),rep("cellC",150))) # balanced 2-way
+
+x_fc = model.matrix(~ -1+celltype, dd2)
+
+sim_x_fc = list(simdata1 = x_fc, simdata2 = x_fc,Simdata3 = x_fc)
+simdata_fc = list(simdata1 = SPARSim_result$count_matrix,simdata1 =SPARSim_result2$count_matrix,simdata1 =SPARSim_result3$count_matrix)
+
+simdata_sc_fc = lapply(simdata_fc, function(x) return(log1p(x)))
+
+
+system.time(sim_res_scal_fc_seq_rev_2 <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+system.time(sim_res_scal_fc_seq_spa_rev_2 <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+system.time(sim_res_scal_fc_seq_l_rev_2 <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
+
+psim_res_scal_fc_seq_rev_2 = heat_pl(sim_res_scal_fc_seq_rev_2)
+psim_res_scal_fc_seq_spa_rev_2 = heat_pl(sim_res_scal_fc_seq_spa_rev_2)
+psim_res_scal_fc_seq_l_rev_2 = heat_pl(sim_res_scal_fc_seq_l_rev_2)
+```
+
+```{r}
+pfin = ggarrange(psim_res_scal_fc[[1]][[4]],psim_res_scal_fc[[2]][[4]],psim_res_scal_fc[[3]][[4]],psim_res_scal_fc_la[[1]][[4]],psim_res_scal_fc_la[[2]][[4]],psim_res_scal_fc_la[[3]][[4]],nrow = 2,ncol = 3)
+ggsave("pfin.pdf",pfin,height = 10,width = 20)
+
+pfin_seq = ggarrange(psim_res_scal_fc_seq[[1]][[4]],psim_res_scal_fc_seq[[2]][[4]],psim_res_scal_fc_seq[[3]][[4]],psim_res_scal_fc_seq_l[[1]][[4]],psim_res_scal_fc_seq_l[[2]][[4]],psim_res_scal_fc_seq_l[[3]][[4]],nrow = 2,ncol = 3)
+ggsave("pfin_seq.pdf",pfin_seq,height = 10,width = 20)
+pfin_seq_rev = ggarrange(psim_res_scal_fc_seq_rev[[1]][[4]],psim_res_scal_fc_seq_rev[[2]][[4]],psim_res_scal_fc_seq_rev[[3]][[4]],psim_res_scal_fc_seq_l_rev[[1]][[4]],psim_res_scal_fc_seq_l_rev[[2]][[4]],psim_res_scal_fc_seq_l_rev[[3]][[4]],nrow = 2,ncol = 3)
+ggsave("pfin_seq_rev.pdf",pfin_seq_rev,height = 10,width = 20)
+pfin_seq_rev2 = ggarrange(psim_res_scal_fc_seq_rev_2[[1]][[4]],psim_res_scal_fc_seq_rev_2[[2]][[4]],psim_res_scal_fc_seq_rev_2[[3]][[4]],psim_res_scal_fc_seq_l_rev_2[[1]][[4]],psim_res_scal_fc_seq_l_rev_2[[2]][[4]],psim_res_scal_fc_seq_l_rev_2[[3]][[4]],nrow = 2,ncol = 3)
+
+ggsave("pfin_seq_rev2.pdf",pfin_seq_rev2,height = 10,width = 20)
+```
+

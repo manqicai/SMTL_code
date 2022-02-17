@@ -9,15 +9,15 @@ marker_smtl = function(ncore = 40,X = rmtl_X,data = stab_umi_lcpm2_sub2,len = 3,
   cl <- makeCluster(ncore)
   registerDoSNOW(cl)
   
-  sig_mat=foreach(i=1:len, .packages = c("MASS","RMTL","psych","corpcor","fields"), .errorhandling='pass') %dopar% {
+  sig_mat=foreach(i=1:len, .packages = c("MASS","RMTL","psych","corpcor","fields","glmnet"), .errorhandling='pass') %dopar% {
     #result <- tryCatch({
     rmtl_Y = lapply(data, function(x){
       y = as.matrix(x[i,])
       return(y)
     })
-    Rcpp::sourceCpp("D:/Manqi/sc-meth/SMTL/upatetheta.cpp")
-    source("D:/Manqi/sc-meth/JGL-master/R/cvSMTL_L21.R")
-    source("D:/Manqi/sc-meth/JGL-master/R/SMTL_L21.r")
+    Rcpp::sourceCpp("D:/Manqi/sc-meth/SMTL/SMTL_code/upatetheta.cpp")
+    source("D:/Manqi/sc-meth/SMTL/SMTL_code/cvSMTL_L21.R")
+    source("D:/Manqi/sc-meth/SMTL/SMTL_code/SMTL_L21.r")
     m = SMTL(rmtl_X = X, rmtl_Y = rmtl_Y,type = type)
     #cvfit<-cvMTL(X = X,Y=rmtl_Y,type = "Regression",Regularization = "Lasso")
     #m=MTL(X = X,Y=rmtl_Y,Lam1 = cvfit$Lam1.min,Lam1_seq = cvfit$Lam1_seq)
