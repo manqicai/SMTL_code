@@ -6,7 +6,7 @@ SMTL <- function(rmtl_X,rmtl_Y,type = "SParse_L21"){
     K = length(rmtl_X)
     cvfit<-cvSMTL_L21(rmtl_X, rmtl_Y)
     m=admm.iters(Y = rmtl_Y,X = rmtl_X,lambda1 = cvfit$Lam1.min,lambda2   = cvfit$Lam2.min)$theta
-    m = matrix(unlist(m),ncol = K,byrow = T)
+    m = matrix(unlist(m),nrow  = K,byrow = T)
     
   }else if(type == "Sparse"){
     cvfit<-cvMTL(X = rmtl_X,Y=rmtl_Y,type = "Regression",Regularization = "Lasso")
