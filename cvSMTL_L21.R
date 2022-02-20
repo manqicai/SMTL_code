@@ -1,4 +1,4 @@
-cvSMTL_L21 <- function(X, Y, Lam1_seq=10^seq(1,-4, -1), Lam2_seq=10^seq(1,-4, -1),nfolds=5, ncores=2, parallel=FALSE){
+cvSMTL_L21 <- function(X, Y, Lam1_seq=10^seq(1,-4, -1), Lam2_seq=10^seq(2,-4, -1),nfolds=5, ncores=2, parallel=FALSE){
   #test vilidity of input data
   if (!missing(X) & !missing(Y)){
     if (all(sapply(X, class)!="matrix")){
@@ -17,7 +17,7 @@ cvSMTL_L21 <- function(X, Y, Lam1_seq=10^seq(1,-4, -1), Lam2_seq=10^seq(1,-4, -1
   
   #cv
   if (!parallel){
-    cvm <- matrix(0, length(Lam1_seq),length(Lam1_seq))
+    cvm <- matrix(0, length(Lam1_seq),length(Lam2_seq))
     for (i in 1:nfolds){
       cv_Xtr <- lapply(c(1:task_num),
                        function(x) X[[x]][cvPar[[i]][[1]][[x]], ])
@@ -29,7 +29,7 @@ cvSMTL_L21 <- function(X, Y, Lam1_seq=10^seq(1,-4, -1), Lam2_seq=10^seq(1,-4, -1
                        function(x) Y[[x]][cvPar[[i]][[2]][[x]]])
       #opt <- opts
       for (lam1_idx in 1: length(Lam1_seq)){
-        for (lam2_idx in 1: length(Lam1_seq)) {
+        for (lam2_idx in 1: length(Lam2_seq)) {
           m <- admm.iters(Y = cv_Ytr,X=cv_Xtr,lambda1=Lam1_seq[lam1_idx],lambda2=Lam2_seq[lam2_idx])
           cv_err <- calcError(m, newX=cv_Xte, newY=cv_Yte)
           cvm[lam1_idx,lam2_idx] = cvm[lam1_idx,lam2_idx]+cv_err
