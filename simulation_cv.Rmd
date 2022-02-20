@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(SPARSim)
 library(parallel)
 library(doSNOW)
+library(ggplot2)
 ```
 
 ```{r}
@@ -150,7 +151,6 @@ sim_x = list(simdata1 = x, simdata2 = x,Simdata3 = x)
 simdata = list(simdata1 = Simdata1$count_matrix,simdata1 =Simdata2$count_matrix,simdata1 =Simdata3$count_matrix)
 
 system.time(sim_res <- marker_smtl_cv(ncore = 63,len =500,data = simdata,X = sim_x))
-sim_mse<-as.data.frame(sim_res)
 
 simdata_sc = lapply(simdata, function(x) return(log1p(x)))
 system.time(sim_res_scal <- marker_smtl(ncore = 63,len =500,data = simdata_sc,X = sim_x))
@@ -286,9 +286,39 @@ simdata_sc_fc = lapply(simdata_fc, function(x) return(log1p(x)))
 simdata_sc_fc_sub = lapply(simdata_sc_fc, function(x){
   x = x[c(1:1500),]
 })
-system.time(sim_res_scal_fc <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
-system.time(sim_res_scal_fc_Lasso <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
-system.time(sim_res_scal_fc_sparse <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+#system.time(sim_res_scal_fc <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+#system.time(sim_res_scal_fc_Lasso <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "LASSO"))
+#system.time(sim_res_scal_fc_sparse <- marker_smtl(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc,type = "Sparse"))
+system.time(sim_res_scal_fc <- marker_smtl_cv(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+system.time(sim_res_scal_fc1 <- marker_smtl_cv(ncore = 63,len =1500,data = simdata_sc_fc,X = sim_x_fc))
+
+sim_mse<-lapply(sim_res_scal_fc,function(x) return(as.vector(x)))
+sim_mse.nerr<-Map(function(x) {
+ if(is.numeric(x)){
+   x=x
+ }else{
+   x=NULL
+ }
+  },sim_mse)
+sim_mse.nerr<-sim_mse.nerr[!sapply(sim_mse.nerr,is.null)]
+sim_mse.df<-do.call(rbind.data.frame, sim_mse.nerr)
+names(sim_mse.df)<-1:36
+sim_mse.mx<-as.matrix(sim_mse.df)
+matplot(x=t(sim_mse.mx[1:50,]),type="l")
+
+sim_mse1<-lapply(sim_res_scal_fc1,function(x) return(as.vector(x)))
+sim_mse.nerr1<-Map(function(x) {
+ if(is.numeric(x)){
+   x=x
+ }else{
+   x=NULL
+ }
+  },sim_mse1)
+sim_mse.nerr1<-sim_mse.nerr1[!sapply(sim_mse.nerr1,is.null)]
+sim_mse.df1<-do.call(rbind.data.frame, sim_mse.nerr1)
+names(sim_mse.df1)<-1:36
+sim_mse.mx1<-as.matrix(sim_mse.df1)
+matplot(x=t(sim_mse.mx1[1:50,]),type="l")
 
 heat_pl = function(x){
   # K = nrow(x[[1]])

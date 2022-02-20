@@ -16,7 +16,7 @@ marker_smtl_cv = function(ncore = 40,X = rmtl_X,data = stab_umi_lcpm2_sub2,len =
       return(y)
     })
     Rcpp::sourceCpp("D:/Manqi/sc-meth/SMTL/SMTL_code/upatetheta.cpp")
-    source("D:/Manqi/sc-meth/SMTL/SMTL_code/cvSMTL_L21.R")
+    source("D:/Gehui/SMTL_code/cvSMTL_L21_test.R")
     source("D:/Manqi/sc-meth/SMTL/SMTL_code/SMTL_L21.r")
     #m = SMTL(rmtl_X = X, rmtl_Y = rmtl_Y,type = type)
     #cvfit<-cvMTL(X = X,Y=rmtl_Y,type = "Regression",Regularization = "Lasso")
