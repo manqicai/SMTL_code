@@ -6,15 +6,17 @@ sim_fc = function(sce_mat,ct1 = Chu_param_preset$Chu_C6,ngene = 300,ncell = 100,
   
   simdat = list()
   SPARSim_result = list()
-  if(OS == "windows"){
+  if(OS == "Windows"){
     cl <- makeCluster(ndat)
     registerDoSNOW(cl)
   }else if (OS == "Linux"){
     registerDoMC(cores=ndat)
   }
+
+ # for (j in 1:ndat) {
+    
   
-  
-  SPARSim_result = foreach(j = 1:ndat, .packages = c("MASS","RMTL","psych","corpcor","fields","glmnet","SPARSim"), .errorhandling='pass') %dopar% {
+ SPARSim_result = foreach(j = 1:ndat, .packages = c("MASS","RMTL","psych","corpcor","fields","glmnet","SPARSim"), .errorhandling='pass') %dopar% {
     simdat[[j]] = list()
     simdat[[j]][[1]] = ct1
     for (i in 2:nct) {
@@ -28,11 +30,11 @@ sim_fc = function(sce_mat,ct1 = Chu_param_preset$Chu_C6,ngene = 300,ncell = 100,
         N_cells = ncell,
         condition_name = paste0("cell_",LETTERS[i]))
     }
-    res = SPARSim_simulation(simdat[[j]])$count_matrix
-    return(res)
+    SPARSim_result[[j]] = SPARSim_simulation(simdat[[j]])$count_matrix
+  return(res)
   }
   
-  if(OS == "windows"){
+  if(OS == "Windows"){
     stopCluster(cl)
   }
   
@@ -44,3 +46,4 @@ sim_fc = function(sce_mat,ct1 = Chu_param_preset$Chu_C6,ngene = 300,ncell = 100,
   
   return(simdata_sc_fc_sub)
 }
+
